@@ -9,39 +9,50 @@ const Login = () => {
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    const { user, error } = await supabase.auth.signInWithPassword({
+    setError('');
+
+    const { data, error: loginError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      setError(error.message);
+    if (loginError) {
+      setError(loginError.message);
     } else {
-      alert('Login successful!');
-      // For now, redirect to home — later add role check
-      navigate('/');
+      alert('✅ Login successful!');
+      navigate('/'); // redirect to home or dashboard
     }
   };
 
   return (
     <div className="container">
       <h2>Login</h2>
+      <p>Access your account:</p>
+
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        style={{ marginBottom: '10px', display: 'block' }}
+        style={{ display: 'block', marginBottom: '10px', padding: '8px', width: '300px' }}
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        style={{ marginBottom: '10px', display: 'block' }}
+        style={{ display: 'block', marginBottom: '10px', padding: '8px', width: '300px' }}
       />
-      <button onClick={handleLogin}>Login</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      <button onClick={handleLogin} style={{ padding: '10px 20px' }}>
+        Login
+      </button>
+
+      {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+
+      <p style={{ marginTop: '1rem' }}>
+        Don’t have an account? <a href="/register">Register here</a>
+      </p>
     </div>
   );
 };

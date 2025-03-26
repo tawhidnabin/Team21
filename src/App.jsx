@@ -12,7 +12,7 @@ import TeacherPortal from './pages/TeacherPortal';
 import StudentPortal from './pages/StudentPortal';
 import TeacherDashboard from './pages/TeacherDashboard';
 
-// Route Protection
+// Protected Route Wrapper
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -58,6 +58,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </Router>
   );
