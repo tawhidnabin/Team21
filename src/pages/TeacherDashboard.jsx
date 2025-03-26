@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Link } from 'react-router-dom';
+import LogoutButton from '../components/LogoutButton';
 
 const TeacherDashboard = () => {
   const [records, setRecords] = useState([]);
@@ -8,14 +9,9 @@ const TeacherDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTeacherData = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        return;
-      }
+    const fetchData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
       setUserEmail(user.email);
 
@@ -34,7 +30,7 @@ const TeacherDashboard = () => {
       setLoading(false);
     };
 
-    fetchTeacherData();
+    fetchData();
   }, []);
 
   return (
@@ -43,11 +39,11 @@ const TeacherDashboard = () => {
       <p>Welcome, {userEmail}</p>
 
       {loading ? (
-        <p>Loading attendance data...</p>
+        <p>Loading attendance...</p>
       ) : records.length === 0 ? (
-        <p>No sessions found yet.</p>
+        <p>No attendance data yet.</p>
       ) : (
-        <table border="1" cellPadding="10" style={{ marginTop: '1rem', width: '100%' }}>
+        <table border="1" cellPadding="10" style={{ width: '100%', marginTop: '1rem' }}>
           <thead>
             <tr>
               <th>Session Code</th>
@@ -67,7 +63,8 @@ const TeacherDashboard = () => {
         </table>
       )}
 
-      <div style={{ marginTop: '2rem' }}>
+      <LogoutButton />
+      <div style={{ marginTop: '1rem' }}>
         <Link to="/">← Back to Home</Link>
       </div>
     </div>

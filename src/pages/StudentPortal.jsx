@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import QrReader from 'react-qr-reader';
 import { supabase } from '../lib/supabaseClient';
+import { Link } from 'react-router-dom';
+import QrScanner from 'react-qr-scanner';
 import LogoutButton from '../components/LogoutButton';
 
 const StudentPortal = () => {
   const [scanResult, setScanResult] = useState('');
-  const [isScanning, setIsScanning] = useState(false);
   const [message, setMessage] = useState('');
+  const [isScanning, setIsScanning] = useState(false);
 
   const handleScan = async (data) => {
     if (data) {
-      setScanResult(data);
+      const sessionCode = data.text || data;
+      setScanResult(sessionCode);
       setIsScanning(false);
 
       const { data: { user } } = await supabase.auth.getUser();
@@ -24,7 +25,7 @@ const StudentPortal = () => {
       const { error } = await supabase.from('attendance').insert([
         {
           user_email: user.email,
-          session_code: data,
+          session_code: sessionCode,
         },
       ]);
 
@@ -37,14 +38,14 @@ const StudentPortal = () => {
   };
 
   const handleError = (err) => {
-    console.error('QR Error:', err);
-    setMessage('Error accessing camera.');
+    console.error('QR Scan Error:', err);
+    setMessage('Error scanning QR code.');
   };
 
   return (
     <div className="container">
       <h2>Student Portal</h2>
-      <p>Scan the QR code from your teacher.</p>
+      <p>Scan the QR code shown by your teacher to mark attendance.</p>
 
       {!isScanning && (
         <button onClick={() => setIsScanning(true)}>Start Scanner</button>
@@ -52,11 +53,11 @@ const StudentPortal = () => {
 
       {isScanning && (
         <div style={{ marginTop: '1rem' }}>
-          <QrReader
+          <QrScanner
             delay={300}
+            style={{ width: '100%' }}
             onError={handleError}
             onScan={handleScan}
-            style={{ width: '100%' }}
           />
           <button onClick={() => setIsScanning(false)} style={{ marginTop: '1rem' }}>
             Stop Scanner
