@@ -58,6 +58,11 @@ const StudentPortal = () => {
             style={{ width: '100%' }}
             onError={handleError}
             onScan={handleScan}
+            constraints={{
+              video: {
+                facingMode: 'environment', // ✅ forces back camera
+              },
+            }}
           />
           <button onClick={() => setIsScanning(false)} style={{ marginTop: '1rem' }}>
             Stop Scanner
