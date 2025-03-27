@@ -4,21 +4,30 @@ import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const navigate = useNavigate();
+
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('student'); // default role
+  const [rollNumber, setRollNumber] = useState('');
+  const [studentClass, setStudentClass] = useState('');
+  const [session, setSession] = useState('Morning');
+  const [role, setRole] = useState('student');
   const [error, setError] = useState('');
 
   const handleRegister = async () => {
     setError('');
 
-    // Step 1: Sign up user
     const { data, error: signupError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          role: role, // save role in user_metadata
+          role,
+          full_name: fullName,
+          roll_number: rollNumber,
+          class_name: studentClass,
+          session: session,
+          registered_at: new Date().toISOString(),
         },
       },
     });
@@ -26,7 +35,7 @@ const Register = () => {
     if (signupError) {
       setError(signupError.message);
     } else {
-      alert('✅ Account created! Check your email to confirm registration.');
+      alert('✅ Account created! Check your email to confirm.');
       navigate('/login');
     }
   };
@@ -37,29 +46,68 @@ const Register = () => {
       <p>Create a new account:</p>
 
       <input
+        type="text"
+        placeholder="Full Name"
+        value={fullName}
+        onChange={(e) => setFullName(e.target.value)}
+        style={inputStyle}
+      />
+
+      <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        style={{ display: 'block', marginBottom: '10px', padding: '8px', width: '300px' }}
+        style={inputStyle}
       />
+
       <input
         type="password"
-        placeholder="Password (min 6 characters)"
+        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        style={{ display: 'block', marginBottom: '10px', padding: '8px', width: '300px' }}
+        style={inputStyle}
       />
+
+      <input
+        type="text"
+        placeholder="Roll Number"
+        value={rollNumber}
+        onChange={(e) => setRollNumber(e.target.value)}
+        style={inputStyle}
+      />
+
+      <input
+        type="text"
+        placeholder="Class (e.g. Year 1 CS)"
+        value={studentClass}
+        onChange={(e) => setStudentClass(e.target.value)}
+        style={inputStyle}
+      />
+
+      <label style={{ marginTop: '10px' }}>Session:</label>
+      <select
+        value={session}
+        onChange={(e) => setSession(e.target.value)}
+        style={inputStyle}
+      >
+        <option value="Morning">Morning</option>
+        <option value="Afternoon">Afternoon</option>
+        <option value="Evening">Evening</option>
+      </select>
+
+      <label style={{ marginTop: '10px' }}>Select Role:</label>
       <select
         value={role}
         onChange={(e) => setRole(e.target.value)}
-        style={{ display: 'block', marginBottom: '10px', padding: '8px', width: '300px' }}
+        style={inputStyle}
       >
         <option value="student">Student</option>
         <option value="teacher">Teacher</option>
+        <option value="admin">Admin</option>
       </select>
 
-      <button onClick={handleRegister} style={{ padding: '10px 20px' }}>
+      <button onClick={handleRegister} style={{ padding: '10px 20px', marginTop: '20px' }}>
         Register
       </button>
 
@@ -70,6 +118,13 @@ const Register = () => {
       </p>
     </div>
   );
+};
+
+const inputStyle = {
+  display: 'block',
+  marginBottom: '10px',
+  padding: '8px',
+  width: '300px',
 };
 
 export default Register;

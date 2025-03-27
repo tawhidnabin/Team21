@@ -1,18 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Public Pages
+// Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-
-// Protected Portals
 import AdminPanel from './pages/AdminPanel';
 import TeacherPortal from './pages/TeacherPortal';
 import StudentPortal from './pages/StudentPortal';
 import TeacherDashboard from './pages/TeacherDashboard';
+import MySessions from './pages/MySessions';
+import NoAccess from './pages/NoAccess'; // Optional error page
 
-// Protected Route Wrapper
+// Protected Route
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -20,41 +20,56 @@ function App() {
     <Router>
       <Routes>
 
-        {/* Public Routes */}
+        {/* 🌐 Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/no-access" element={<NoAccess />} />
 
-        {/* Protected Routes */}
+        {/* 🔐 Admin */}
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['admin']}>
               <AdminPanel />
             </ProtectedRoute>
           }
         />
+
+        {/* 🔐 Teacher */}
         <Route
           path="/teacher"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['teacher']}>
               <TeacherPortal />
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/student"
-          element={
-            <ProtectedRoute>
-              <StudentPortal />
-            </ProtectedRoute>
-          }
-        />
+
         <Route
           path="/teacher-dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['teacher']}>
               <TeacherDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-sessions"
+          element={
+            <ProtectedRoute allowedRoles={['teacher']}>
+              <MySessions />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 🔐 Student */}
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <StudentPortal />
             </ProtectedRoute>
           }
         />

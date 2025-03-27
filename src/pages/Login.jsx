@@ -11,16 +11,36 @@ const Login = () => {
   const handleLogin = async () => {
     setError('');
 
-    const { data, error: loginError } = await supabase.auth.signInWithPassword({
+    // Step 1: Sign in user
+    const { data: signInData, error: loginError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (loginError) {
       setError(loginError.message);
+      return;
+    }
+
+    // Step 2: Fetch full user info (metadata)
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+
+    if (userError) {
+      setError(userError.message);
+      return;
+    }
+
+    const role = userData?.user?.user_metadata?.role;
+
+    // Step 3: Redirect based on role
+    if (role === 'admin') {
+      navigate('/admin');
+    } else if (role === 'teacher') {
+      navigate('/teacher');
+    } else if (role === 'student') {
+      navigate('/student');
     } else {
-      alert('✅ Login successful!');
-      navigate('/'); // redirect to home or dashboard
+      navigate('/');
     }
   };
 
